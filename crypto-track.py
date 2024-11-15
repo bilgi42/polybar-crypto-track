@@ -3,7 +3,7 @@
 import requests
 
 WALLET_ADDRESS = ""
-CURRENCY = "eur" # Some other examples would be "usd", "jpy", "try", "cad", "chy" and more. For more references, please visit https://docs.coingecko.com/reference/simple-supported-currencies
+CURRENCY = "eur" # Some other examples would be "usd", "jpy", "try", "cad", "chf" and more. For more references, please visit https://docs.coingecko.com/reference/simple-supported-currencies
 BLOCKCHYPER_IDS = "btc" # Some other examples would be "ltc", "sol", "ada" and more
 COINGECKO_IDS = "bitcoin" # Coins full name
 SYMBOLS = "€" # If you want to change the logo for the output, you can change it here
