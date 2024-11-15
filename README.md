@@ -34,4 +34,4 @@ exec = ~/.config/polybar/crypto-track.py
 
 # Post Installation and Config
 
-All the configs can be found in the Python file
+All the configs can be found in the Python file. Please edit the Python file for coin address, type and pairings.
