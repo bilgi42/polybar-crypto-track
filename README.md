@@ -14,7 +14,7 @@ For example:\
 git clone https://github.com/bilgi42/polybar-crypto-track.git &&
     cd polybar-crypto-track &&
     mkdir -p ~/.config/polybar &&
-    cp ./crypto-tracker.py ~/.config/polybar &&
+    cp ./crypto-track.py ~/.config/polybar &&
     sudo chmod u+x ~/.config/polybar/crypto-track.py
 ```
 
