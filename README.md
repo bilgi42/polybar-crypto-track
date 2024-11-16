@@ -14,7 +14,7 @@ For example:\
 git clone https://github.com/bilgi42/polybar-crypto-track.git &&
     cd polybar-crypto-track &&
     mkdir -p ~/.config/polybar &&
-    cp ./crypto-tracker.py ~/.config/polybar &&
+    cp ./crypto-track.py ~/.config/polybar &&
     sudo chmod u+x ~/.config/polybar/crypto-track.py
 ```
 
@@ -34,4 +34,9 @@ exec = ~/.config/polybar/crypto-track.py
 
 # Post Installation and Config
 
-All the configs can be found in the Python file
+You will need an JSON config in order to use this program. You can generate it on http://bilgi42.github.io/polybar-crypto-tracker\
+Simply move the JSON to ~/.config/polybar
+
+```
+cp Downloads/crypto-track.json ~/.config/polybar/
+```
