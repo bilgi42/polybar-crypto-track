@@ -1,24 +1,29 @@
 #!/usr/bin/env python3
 
 import requests
+import json
 
-WALLET_ADDRESS = ""
-CURRENCY = "eur" # Some other examples would be "usd", "jpy", "try", "cad", "chy" and more. For more references, please visit https://docs.coingecko.com/reference/simple-supported-currencies
-BLOCKCHYPER_IDS = "btc" # Some other examples would be "ltc", "sol", "ada" and more
-COINGECKO_IDS = "bitcoin" # Coins full name
-SYMBOLS = "€" # If you want to change the logo for the output, you can change it here
+with open("crypto-track.json" , 'r') as file:
+    data = json.load(file)
 
+CURRENCY = data[0]["CURRENCY"]
+SYMBOLS = data[0]["SYMBOLS"] 
+total_balance = 0
 
-blockcypher_url = f"https://api.blockcypher.com/v1/{BLOCKCHYPER_IDS}/main/addrs/{WALLET_ADDRESS}/balance"
-coingecko_url = f"https://api.coingecko.com/api/v3/simple/price?ids={COINGECKO_IDS}&vs_currencies={CURRENCY}"
+for item in data[1:]:
+    WALLET_ADDRESS = item["WALLET_ADDRESS"]
+    SHORTNAME = item["SHORTNAME"]
+    FULLNAME = item["FULLNAME"]
+    blockcypher_url = f"https://api.blockcypher.com/v1/{SHORTNAME}/main/addrs/{WALLET_ADDRESS}/balance"
+    coingecko_url = f"https://api.coingecko.com/api/v3/simple/price?ids={FULLNAME}&vs_currencies={CURRENCY}"
 
+    wallet_request = requests.get(url=blockcypher_url).json()
+    wallet_balance = wallet_request["balance"] / 1e8
 
-wallet_request = requests.get(url=blockcypher_url).json()
-wallet_balance = wallet_request["balance"] / 1e8
+    price_request = requests.get(url=coingecko_url).json()
+    price = price_request[FULLNAME][CURRENCY]
 
-price_request = requests.get(url=coingecko_url).json()
-price = price_request[COINGECKO_IDS][CURRENCY]
+    balance = wallet_balance * price
+    total_balance += balance
 
-balance = wallet_balance * price
-
-print(f"{SYMBOLS} {balance:.2f}")
+print(f"{SYMBOLS} {total_balance:.2f}")

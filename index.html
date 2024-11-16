@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html data-theme="light">
+<head>
+    <title>Crypto JSON Generator</title>
+    <style>
+        /* Dark mode variables */
+        :root[data-theme="light"] {
+            --bg-color: #f5f5f5;
+            --container-bg: white;
+            --text-color: #333;
+            --input-bg: white;
+            --input-border: #ced4da;
+            --wallet-bg: #f8f9fa;
+            --wallet-border: #dee2e6;
+            --top-section-bg: #e9ecef;
+            --json-bg: #272822;
+            --json-color: #f8f8f2;
+        }
+
+        :root[data-theme="dark"] {
+            --bg-color: #1a1a1a;
+            --container-bg: #2d2d2d;
+            --text-color: #e0e0e0;
+            --input-bg: #3d3d3d;
+            --input-border: #4d4d4d;
+            --wallet-bg: #363636;
+            --wallet-border: #4d4d4d;
+            --top-section-bg: #363636;
+            --json-bg: #1e1e1e;
+            --json-color: #e0e0e0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: all 0.3s ease;
+        }
+
+        .container {
+            background: var(--container-bg);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .wallet-entry {
+            background: var(--wallet-bg);
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 4px;
+            border: 1px solid var(--wallet-border);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid var(--input-border);
+            border-radius: 4px;
+            box-sizing: border-box;
+            background-color: var(--input-bg);
+            color: var(--text-color);
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        button.remove {
+            background-color: #dc3545;
+        }
+
+        button.remove:hover {
+            background-color: #c82333;
+        }
+
+        #jsonOutput {
+            background: var(--json-bg);
+            color: var(--json-color);
+            padding: 15px;
+            border-radius: 4px;
+            white-space: pre;
+            overflow-x: auto;
+        }
+
+        .top-section {
+            background: var(--top-section-bg);
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }
+
+        /* Dark mode toggle styles */
+        .theme-switch-wrapper {
+            display: flex;
+            align-items: center;
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
+
+        .theme-switch {
+            display: inline-block;
+            height: 34px;
+            position: relative;
+            width: 60px;
+        }
+
+        .theme-switch input {
+            display: none;
+        }
+
+        .slider {
+            background-color: #ccc;
+            bottom: 0;
+            cursor: pointer;
+            left: 0;
+            position: absolute;
+            right: 0;
+            top: 0;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            background-color: #fff;
+            bottom: 4px;
+            content: "";
+            height: 26px;
+            left: 4px;
+            position: absolute;
+            transition: .4s;
+            width: 26px;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #66bb6a;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+        .button-group {
+            margin: 10px 0;
+            display: flex;
+            gap: 10px;
+        }
+
+        .download-btn {
+            background-color: #28a745;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .download-btn:hover {
+            background-color: #218838;
+        }
+
+        .download-btn svg {
+            width: 16px;
+            height: 16px;
+            fill: currentColor;
+        }
+
+        /* Add disabled state styles */
+        .download-btn:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+            opacity: 0.65;
+        }
+    </style>
+</head>
+<body>
+    <div class="theme-switch-wrapper">
+        <label class="theme-switch" for="checkbox">
+            <input type="checkbox" id="checkbox" />
+            <div class="slider"></div>
+        </label>
+    </div>
+
+    <div class="container">
+        <h2>Cryptocurrency JSON Generator</h2>
+        
+        <div class="top-section">
+            <div class="form-group">
+                <label for="currency">Currency:</label>
+                <select id="currency">
+                    <option value="usd">USD - United States Dollar</option>
+                    <option value="eur">EUR - Euro</option>
+                    <option value="gbp">GBP - British Pound</option>
+                    <option value="jpy">JPY - Japanese Yen</option>
+                    <option value="aed">AED - UAE Dirham</option>
+                    <option value="ars">ARS - Argentine Peso</option>
+                    <option value="aud">AUD - Australian Dollar</option>
+                    <option value="bdt">BDT - Bangladeshi Taka</option>
+                    <option value="bhd">BHD - Bahraini Dinar</option>
+                    <option value="bmd">BMD - Bermudian Dollar</option>
+                    <option value="brl">BRL - Brazilian Real</option>
+                    <option value="cad">CAD - Canadian Dollar</option>
+                    <option value="chf">CHF - Swiss Franc</option>
+                    <option value="clp">CLP - Chilean Peso</option>
+                    <option value="cny">CNY - Chinese Yuan</option>
+                    <option value="czk">CZK - Czech Koruna</option>
+                    <option value="dkk">DKK - Danish Krone</option>
+                    <option value="hkd">HKD - Hong Kong Dollar</option>
+                    <option value="huf">HUF - Hungarian Forint</option>
+                    <option value="idr">IDR - Indonesian Rupiah</option>
+                    <option value="inr">INR - Indian Rupee</option>
+                    <option value="kwd">KWD - Kuwaiti Dinar</option>
+                    <option value="krw">KRW - South Korean Won</option>
+                    <option value="lkr">LKR - Sri Lankan Rupee</option>
+                    <option value="mmk">MMK - Burmese Kyat</option>
+                    <option value="mxn">MXN - Mexican Peso</option>
+                    <option value="myr">MYR - Malaysian Ringgit</option>
+                    <option value="ngn">NGN - Nigerian Naira</option>
+                    <option value="nok">NOK - Norwegian Krone</option>
+                    <option value="nzd">NZD - New Zealand Dollar</option>
+                    <option value="php">PHP - Philippine Peso</option>
+                    <option value="pkr">PKR - Pakistani Rupee</option>
+                    <option value="pln">PLN - Polish Złoty</option>
+                    <option value="rub">RUB - Russian Ruble</option>
+                    <option value="sar">SAR - Saudi Riyal</option>
+                    <option value="sek">SEK - Swedish Krona</option>
+                    <option value="sgd">SGD - Singapore Dollar</option>
+                    <option value="thb">THB - Thai Baht</option>
+                    <option value="try">TRY - Turkish Lira</option>
+                    <option value="twd">TWD - New Taiwan Dollar</option>
+                    <option value="uah">UAH - Ukrainian Hryvnia</option>
+                    <option value="vef">VEF - Venezuelan Bolívar</option>
+                    <option value="vnd">VND - Vietnamese Đồng</option>
+                    <option value="zar">ZAR - South African Rand</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="symbol">Symbol:</label>
+                <input type="text" id="symbol" placeholder="Enter symbol (e.g., $, €)">
+            </div>
+        </div>
+
+        <div id="walletEntries"></div>
+        
+        <div class="button-group">
+            <button onclick="addWalletEntry()">Add Wallet Entry</button>
+            <button onclick="generateAndDownloadJSON()" class="download-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+                </svg>
+                Download JSON
+            </button>
+        </div>
+
+        <h3>Generated JSON:</h3>
+        <pre id="jsonOutput"></pre>
+    </div>
+
+    <script>
+        const cryptocurrencies = [
+             // Base Layer 1 Cryptocurrencies
+             { name: "Bitcoin", shortname: "btc", fullname: "bitcoin" },
+            { name: "Bitcoin Cash", shortname: "bch", fullname: "bitcoin-cash" },
+            { name: "Bitcoin Gold", shortname: "btg", fullname: "bitcoin-gold" },
+            { name: "Bitcoin SV", shortname: "bsv", fullname: "bitcoin-sv" },
+            { name: "Litecoin", shortname: "ltc", fullname: "litecoin" },
+            { name: "Dogecoin", shortname: "doge", fullname: "dogecoin" },
+            { name: "Dash", shortname: "dash", fullname: "dash" },
+            
+            // Ethereum & Related
+            { name: "Ethereum", shortname: "eth", fullname: "ethereum" },
+            { name: "Ethereum Classic", shortname: "etc", fullname: "ethereum-classic" },
+            
+            // Other Major Platforms
+            { name: "Ripple", shortname: "xrp", fullname: "ripple" },
+            { name: "Stellar", shortname: "xlm", fullname: "stellar" },
+            { name: "Algorand", shortname: "algo", fullname: "algorand" },
+            { name: "Cosmos", shortname: "atom", fullname: "cosmos" },
+            { name: "Polkadot", shortname: "dot", fullname: "polkadot" },
+            { name: "Cardano", shortname: "ada", fullname: "cardano" },
+            { name: "Solana", shortname: "sol", fullname: "solana" },
+            { name: "Avalanche", shortname: "avax", fullname: "avalanche-2" },
+            { name: "Polygon", shortname: "matic", fullname: "matic-network" },
+            { name: "Tron", shortname: "trx", fullname: "tron" },
+            
+            // Privacy Coins
+            { name: "Monero", shortname: "xmr", fullname: "monero" },
+            { name: "Zcash", shortname: "zec", fullname: "zcash" },
+            
+            // Stablecoins
+            { name: "Tether USD", shortname: "usdt", fullname: "tether" },
+            { name: "USD Coin", shortname: "usdc", fullname: "usd-coin" },
+            { name: "Dai", shortname: "dai", fullname: "dai" },
+            { name: "Binance USD", shortname: "busd", fullname: "binance-usd" },
+            
+            // Exchange Tokens
+            { name: "Binance Coin", shortname: "bnb", fullname: "binancecoin" },
+            { name: "FTX Token", shortname: "ftt", fullname: "ftx-token" },
+            { name: "Huobi Token", shortname: "ht", fullname: "huobi-token" },
+            { name: "KuCoin Token", shortname: "kcs", fullname: "kucoin-shares" },
+            
+            // DeFi Tokens
+            { name: "Chainlink", shortname: "link", fullname: "chainlink" },
+            { name: "Uniswap", shortname: "uni", fullname: "uniswap" },
+            { name: "Aave", shortname: "aave", fullname: "aave" },
+            { name: "Compound", shortname: "comp", fullname: "compound-governance-token" },
+            { name: "Maker", shortname: "mkr", fullname: "maker" },
+            { name: "PancakeSwap", shortname: "cake", fullname: "pancakeswap-token" },
+            { name: "SushiSwap", shortname: "sushi", fullname: "sushi" },
+            
+            // Gaming & Metaverse
+            { name: "Axie Infinity", shortname: "axs", fullname: "axie-infinity" },
+            { name: "Decentraland", shortname: "mana", fullname: "decentraland" },
+            { name: "The Sandbox", shortname: "sand", fullname: "the-sandbox" },
+            
+            // Infrastructure
+            { name: "Filecoin", shortname: "fil", fullname: "filecoin" },
+            { name: "The Graph", shortname: "grt", fullname: "the-graph" },
+            { name: "Theta Network", shortname: "theta", fullname: "theta-token" }
+        ];
+
+        document.getElementById('currency').addEventListener('change', function() {
+            const symbolMap = {
+                'usd': '$', 'eur': '€', 'gbp': '£', 'jpy': '¥', 'aed': 'د.إ',
+                'ars': '$', 'aud': 'A$', 'brl': 'R$', 'cad': 'C$', 
+                'chf': 'Fr', 'cny': '¥', 'hkd': 'HK$', 'inr': '₹',
+                'krw': '₩', 'mxn': '$', 'myr': 'RM', 'nzd': 'NZ$',
+                'php': '₱', 'rub': '₽', 'sar': '﷼', 'sgd': 'S$',
+                'thb': '฿', 'try': '₺', 'twd': 'NT$', 'vnd': '₫',
+                'zar': 'R'
+            };
+            document.getElementById('symbol').value = symbolMap[this.value] || '';
+        });
+
+        // Add dark mode toggle functionality
+        const toggleSwitch = document.querySelector('#checkbox');
+        const html = document.querySelector('html');
+
+        // Check for saved theme preference
+        const currentTheme = localStorage.getItem('theme');
+        if (currentTheme) {
+            html.setAttribute('data-theme', currentTheme);
+            if (currentTheme === 'dark') {
+                toggleSwitch.checked = true;
+            }
+        }
+
+        function switchTheme(e) {
+            if (e.target.checked) {
+                html.setAttribute('data-theme', 'dark');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                html.setAttribute('data-theme', 'light');
+                localStorage.setItem('theme', 'light');
+            }
+        }
+
+        toggleSwitch.addEventListener('change', switchTheme, false);
+
+        // Rest of the JavaScript functions remain the same
+        function createWalletEntry(index) {
+            const div = document.createElement('div');
+            div.className = 'wallet-entry';
+            div.innerHTML = `
+                <div class="form-group">
+                    <label for="wallet${index}">Wallet Address:</label>
+                    <input type="text" id="wallet${index}" placeholder="Enter wallet address">
+                </div>
+                <div class="form-group">
+                    <label for="crypto${index}">Cryptocurrency:</label>
+                    <select id="crypto${index}">
+                        ${cryptocurrencies.map(crypto => 
+                            `<option value="${crypto.shortname},${crypto.fullname}">${crypto.name}</option>`
+                        ).join('')}
+                    </select>
+                </div>
+                <button class="remove" onclick="removeWalletEntry(this)">Remove</button>
+            `;
+            return div;
+        }
+
+        function addWalletEntry() {
+            const container = document.getElementById('walletEntries');
+            const index = container.children.length;
+            container.appendChild(createWalletEntry(index));
+        }
+
+        function removeWalletEntry(button) {
+            button.parentElement.remove();
+        }
+
+        function generateAndDownloadJSON() {
+            const currency = document.getElementById('currency').value;
+            const symbol = document.getElementById('symbol').value;
+            
+            let result = [
+                {
+                    "CURRENCY": currency,
+                    "SYMBOLS": symbol
+                }
+            ];
+
+            const entries = document.getElementById('walletEntries').children;
+            for (let entry of entries) {
+                const walletAddress = entry.querySelector('input[id^="wallet"]').value;
+                const [shortname, fullname] = entry.querySelector('select').value.split(',');
+                
+                result.push({
+                    "WALLET_ADDRESS": walletAddress,
+                    "SHORTNAME": shortname,
+                    "FULLNAME": fullname
+                });
+            }
+
+            const jsonString = JSON.stringify(result, null, 4);
+            document.getElementById('jsonOutput').textContent = jsonString;
+            
+            // Create filename
+            const filename = `crypto-track.json`;
+
+            // Create blob and download link
+            const blob = new Blob([jsonString], { type: 'application/json' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            
+            // Trigger download
+            document.body.appendChild(a);
+            a.click();
+            
+            // Cleanup
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+        }
+
+      
+
+        // Add initial wallet entry
+        addWalletEntry();
+
+        // Trigger initial symbol population
+        document.getElementById('currency').dispatchEvent(new Event('change'));
+    </script>
+</body>
+</html>
