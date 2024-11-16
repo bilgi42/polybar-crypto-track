@@ -34,7 +34,7 @@ exec = ~/.config/polybar/crypto-track.py
 
 # Post Installation and Config
 
-You will need an JSON config in order to use this program. You can generate it on https://bilgi42.github.io/polybar-crypto-track/
+You will need an JSON config in order to use this program. You can generate it on https://bilgi42.github.io/polybar-crypto-track/ \
 Simply move the JSON to ~/.config/polybar
 
 ```
